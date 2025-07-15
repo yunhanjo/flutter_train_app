@@ -1,0 +1,15 @@
+# iOS 네이티브 코드 (Objective-C, Swift, C++, C 등) 제외
+ios/** linguist-language=Ignore
+
+# Android 네이티브 코드 (Java, Kotlin, C++, C 등) 제외
+android/** linguist-language=Ignore
+
+# 빌드 결과물, 캐시 파일 등 제외 (선택사항)
+build/** linguist-language=Ignore
+.gradle/** linguist-language=Ignore
+*.lock linguist-language=Ignore
+
+# 기타 네이티브 라이브러리 등 제외
+*.dll linguist-language=Ignore
+*.so linguist-language=Ignore
+*.dylib linguist-language=Ignore
