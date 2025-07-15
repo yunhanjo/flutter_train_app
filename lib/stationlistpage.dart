@@ -24,11 +24,11 @@ class StationlistPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.purpleAccent[50],
       appBar: AppBar(
-        title: Text(isDeparture ? '출발역' : '도착역'), // ❶ 앱바 타이틀
+        title: Text(isDeparture ? '출발역' : '도착역'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // ❷ 값 없이 뒤로가기
+            Navigator.pop(context);
           },
         ),
       ),
@@ -46,7 +46,7 @@ class StationlistPage extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 onTap: () {
-                  Navigator.pop(context, stationName); // ❹ 역 선택 시 값 반환
+                  Navigator.pop(context, stationName); // 역 선택 시 값 반환
                 },
               
             ),
