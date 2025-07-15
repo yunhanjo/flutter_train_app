@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'homepage.dart';
+import 'seatpage.dart';
 
 //기본 뒤로가기 버튼 사용 (자동)
 //Navigator.push로 화면을 이동한 후, 이전 화면으로 돌아가면 자동으로 뒤로가기 버튼이 나타납니다.
