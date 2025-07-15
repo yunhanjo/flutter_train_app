@@ -99,7 +99,7 @@ class _SeatPageState extends State<SeatPage> {
                           CupertinoDialogAction(
                             child: Text("확인"),
                             onPressed: () {
-                              Navigator.pop(context); // 다이얼로그 닫기
+                              Navigator.pop(context);
 
                               // 홈 화면(HomePage)만 남기고 모든 이전 화면 제거
                               Navigator.of(context).pushAndRemoveUntil(
@@ -173,7 +173,7 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  // 출발/도착역 표시
+  // 출발도착역 표시
   Expanded station(String stationName) {
     return Expanded(
       child: Center(
@@ -189,7 +189,7 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  // 좌석 상태 안내 - 선택된 좌석
+  // 선택된 좌석
   Widget selectSeat() {
     return Container(
       width: 24,
@@ -201,7 +201,7 @@ class _SeatPageState extends State<SeatPage> {
     );
   }
 
-  // 좌석 상태 안내 - 선택 안된 좌석
+  // 선택 안된 좌석
   Widget notselectSeat() {
     return Container(
       width: 24,
