@@ -1,28 +1,39 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'homepage.dart';
-import 'stationlistpage.dart';
 
-class SeatPage extends StatelessWidget {
-  get child => null;
+class SeatPage extends StatefulWidget {
+  final String departure;
+  final String arrival;
+
+  const SeatPage({required this.departure, required this.arrival, Key? key})
+    : super(key: key);
+
+  @override
+  State<SeatPage> createState() => _SeatPageState();
+}
+
+class _SeatPageState extends State<SeatPage> {
+  // 좌석 선택 상태를 저장할 리스트
+  List<List<bool>> seatSelected = List.generate(
+    20,
+    (_) => List.generate(4, (_) => false),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.purpleAccent[50],
-      appBar: AppBar(title: Text('좌석 선택')),
-
+      appBar: AppBar(title: Text('${widget.departure} → ${widget.arrival}')),
       body: SafeArea(
         child: Column(
           children: [
+            // 출발역/도착역
             Row(
-              //출발역도착역
               children: [
-                station('수서'),
-                Center(
-                  child: Icon(Icons.arrow_circle_right_outlined, size: 30),
-                ),
-                station('부산'),
+                station(widget.departure),
+                Icon(Icons.arrow_circle_right_outlined, size: 30),
+                station(widget.arrival),
               ],
             ),
 
@@ -44,43 +55,28 @@ class SeatPage extends StatelessWidget {
             ),
 
             Expanded(
-              child: ListView(
-                padding: EdgeInsets.only(top: 10, bottom: 20), //상하패딩
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      rowNum('A'),
-                      SizedBox(width: 4),
-                      rowNum('B'),
-                      SizedBox(width: 4),
-                      rowNum(' '),
-                      SizedBox(width: 4),
-                      rowNum('C'),
-                      SizedBox(width: 4),
-                      rowNum('D'),
-                    ],
-                  ),
-
-                  for (int i = 1; i <= 20; i++)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          statefulSeat(),
-                          SizedBox(width: 4),
-                          statefulSeat(),
-                          SizedBox(width: 4),
-                          columnNum(i),
-                          SizedBox(width: 4),
-                          statefulSeat(),
-                          SizedBox(width: 4),
-                          statefulSeat(),
-                        ],
-                      ),
+              child: ListView.builder(
+                padding: EdgeInsets.only(top: 10, bottom: 20),
+                itemCount: 20,
+                itemBuilder: (context, i) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        seatBox(i, 0),
+                        SizedBox(width: 4),
+                        seatBox(i, 1),
+                        SizedBox(width: 4),
+                        columnNum(i + 1),
+                        SizedBox(width: 4),
+                        seatBox(i, 2),
+                        SizedBox(width: 4),
+                        seatBox(i, 3),
+                      ],
                     ),
-                ],
+                  );
+                },
               ),
             ),
 
@@ -88,12 +84,41 @@ class SeatPage extends StatelessWidget {
               width: 350,
               height: 50,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (isAnySeatSelected()) {
+                    showCupertinoDialog(
+                      context: context,
+                      builder: (_) => CupertinoAlertDialog(
+                        title: Text("예매 확인"),
+                        content: Text("예매를 진행하시겠습니까?"),
+                        actions: [
+                          CupertinoDialogAction(
+                            child: Text("취소"),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          CupertinoDialogAction(
+                            child: Text("확인"),
+                            onPressed: () {
+                              Navigator.pop(context); // 다이얼로그 닫기
+
+                              // 홈 화면(HomePage)만 남기고 모든 이전 화면 제거
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(builder: (_) => HomePage()),
+                                (route) => false,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
-                  )),
+                  ),
+                ),
                 child: Text(
                   '예매 하기',
                   style: TextStyle(
@@ -110,8 +135,28 @@ class SeatPage extends StatelessWidget {
     );
   }
 
+  // 좌석 한 칸
+  Widget seatBox(int row, int col) {
+    bool selected = seatSelected[row][col];
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          seatSelected[row][col] = !seatSelected[row][col];
+        });
+      },
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: selected ? Colors.purple : Colors.grey[300],
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
+  // 좌석 번호
   Widget columnNum(int num) {
-    //열번호
     return Container(
       width: 50,
       height: 50,
@@ -119,8 +164,8 @@ class SeatPage extends StatelessWidget {
     );
   }
 
+  // A, B, C, D 열 이름
   Widget rowNum(String alphabet) {
-    //행번호
     return Container(
       width: 50,
       height: 50,
@@ -128,8 +173,8 @@ class SeatPage extends StatelessWidget {
     );
   }
 
+  // 출발/도착역 표시
   Expanded station(String stationName) {
-    //출발역도착역
     return Expanded(
       child: Center(
         child: Text(
@@ -144,39 +189,35 @@ class SeatPage extends StatelessWidget {
     );
   }
 
-  Container statefulSeat() {
-    //행열좌석
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.grey[300]!,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
-    );
-  }
-
-  Container notselectSeat() {
-    //선택안된좌석
-    return Container(
-      width: 24,
-      height: 24,
-      decoration: BoxDecoration(
-        color: Colors.grey[300]!,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
-      ),
-    );
-  }
-
-  Container selectSeat() {
-    //선택된좌석
+  // 좌석 상태 안내 - 선택된 좌석
+  Widget selectSeat() {
     return Container(
       width: 24,
       height: 24,
       decoration: BoxDecoration(
         color: Colors.purple,
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderRadius: BorderRadius.circular(8),
       ),
     );
+  }
+
+  // 좌석 상태 안내 - 선택 안된 좌석
+  Widget notselectSeat() {
+    return Container(
+      width: 24,
+      height: 24,
+      decoration: BoxDecoration(
+        color: Colors.grey[300],
+        borderRadius: BorderRadius.circular(8),
+      ),
+    );
+  }
+
+  // 하나라도 좌석 선택되었는지 확인
+  bool isAnySeatSelected() {
+    for (var row in seatSelected) {
+      if (row.contains(true)) return true;
+    }
+    return false;
   }
 }

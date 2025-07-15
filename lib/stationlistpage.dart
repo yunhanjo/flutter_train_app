@@ -1,49 +1,58 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'homepage.dart';
-import 'seatpage.dart';
-
-//기본 뒤로가기 버튼 사용 (자동)
-//Navigator.push로 화면을 이동한 후, 이전 화면으로 돌아가면 자동으로 뒤로가기 버튼이 나타납니다.
-
 
 class StationlistPage extends StatelessWidget {
+  final bool isDeparture;
+
+  StationlistPage({required this.isDeparture, Key? key}) : super(key: key);
+
+  final List<String> stations = [
+    '수서',
+    '동탄',
+    '평택지제',
+    '천안아산',
+    '오송',
+    '대전',
+    '김천구미',
+    '동대구',
+    '경주',
+    '울산',
+    '부산',
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.purpleAccent[50],
-      appBar: AppBar(title: Text('출발역')),
+      appBar: AppBar(
+        title: Text(isDeparture ? '출발역' : '도착역'), // ❶ 앱바 타이틀
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // ❷ 값 없이 뒤로가기
+          },
+        ),
+      ),
 
-      body: Column(
-        children: [
-            station('     수서'),
-            station('     동탄'),
-            station('     평택지제'),
-            station('     천안아산'),
-            station('     오송'),
-            station('     대전'),
-            station('     김천구미'),
-            station('     동대구'),
-            station('     경주'),
-            station('     울산'),
-            station('     부산'),
-        ],
+      body: ListView.separated(
+        itemCount: stations.length,
+        separatorBuilder: (context, index) => Divider(color: Colors.grey[300]),
+        itemBuilder: (context, index) {
+          final stationName = stations[index];
+          return Container(
+            height: 50,
+            child: ListTile(
+                title: Text(
+                  stationName,
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                onTap: () {
+                  Navigator.pop(context, stationName); // ❹ 역 선택 시 값 반환
+                },
+              
+            ),
+          );
+        },
       ),
     );
-  }
-
-  Container station(String name) {
-    return Container(
-              width: double.infinity,
-              height: 50,
-              alignment: Alignment.centerLeft,
-              decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
-              ),
-              child: Text(
-                '$name',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            );
   }
 }
